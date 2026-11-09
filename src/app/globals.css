@@ -1,26 +1,268 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #020b13;
+  --panel: #07131b;
+  --panel-2: #0c1a25;
+  --border: #15242f;
+  --foreground: #eef1f8;
+  --muted: #8794ad;
+  --gold: #d6b06a;
+  --gold-soft: #f3e2b8;
+  --green: #22a06b;
+  --red: #e5484d;
+  --amber: #e5a53a;
+  --violet: #8b5cf6;
+  --sky: #5b8def;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-panel: var(--panel);
+  --color-panel2: var(--panel-2);
+  --color-line: var(--border);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-ok: var(--green);
+  --color-bad: var(--red);
+  --color-warn: var(--amber);
+  --color-violet: var(--violet);
+  --color-sky: var(--sky);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-serif-display), Georgia, serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.btn-gold {
+  background: linear-gradient(180deg, #f3e2b8, #d6b06a);
+  color: #1a1305;
+}
+
+.hero-bg {
+  background:
+    linear-gradient(90deg, #020b13 0%, rgba(6, 10, 20, 0.85) 45%, rgba(6, 10, 20, 0.2) 100%),
+    radial-gradient(500px 260px at 85% 40%, rgba(214, 176, 106, 0.28), transparent 70%),
+    linear-gradient(180deg, #0f1a33, #0a1020);
+}
+
+/* ───────── Refinamento global (camada "components": as utilitárias do Tailwind continuam a prevalecer) ───────── */
+@layer base {
+  html { scroll-behavior: smooth; }
+  ::selection { background: rgba(214, 176, 106, 0.35); }
+  * { scrollbar-width: thin; scrollbar-color: #26324d transparent; }
+  main h1 { font-family: var(--font-serif-display), Georgia, serif; font-weight: 500; letter-spacing: 0.01em; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+}
+
+@layer components {
+  main table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  main table thead th {
+    padding: 0 0.75rem 0.7rem 0; text-align: left; font-size: 0.7rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); white-space: nowrap;
+  }
+  main table tbody td { padding: 0.7rem 0.75rem 0.7rem 0; vertical-align: middle; }
+  main table tbody tr { transition: background-color 0.15s; }
+  main table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  main input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]),
+  main select, main textarea {
+    border-radius: 0.6rem; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  main input:focus, main select:focus, main textarea:focus { box-shadow: 0 0 0 3px rgba(214, 176, 106, 0.15); }
+}
+
+/* Entrada suave do conteúdo e transições fluidas */
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+main > * { animation: rise 0.28s ease-out both; }
+main > *:nth-child(2) { animation-delay: 0.04s; }
+main > *:nth-child(3) { animation-delay: 0.08s; }
+main > *:nth-child(4) { animation-delay: 0.12s; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  main > * { animation: none; }
+}
+
+/* Botões dourados antigos (bg-gold + text-black) ganham o acabamento premium nas restantes páginas */
+@layer components {
+  main .bg-gold {
+    background-image: linear-gradient(180deg, #f3e2b8, #d6b06a);
+    box-shadow: 0 6px 20px -8px rgba(214, 176, 106, 0.55);
+    transition: filter 0.15s, transform 0.1s;
+  }
+  main a.bg-gold:hover, main button.bg-gold:hover { filter: brightness(1.06); }
+  main a.bg-gold:active, main button.bg-gold:active { transform: scale(0.98); }
+  main .rounded-md.bg-gold { border-radius: 0.6rem; }
+}
+
+/* ───── Dashboard: animações premium ───── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes drawArc { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+@keyframes growY { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes spinSlowRev { to { transform: rotate(-360deg); } }
+@keyframes breathe { 0%, 100% { opacity: 0.45; transform: scale(0.96); } 50% { opacity: 0.9; transform: scale(1.04); } }
+@keyframes drift { from { transform: scale(1.02); } to { transform: scale(1.09) translateX(-1.2%); } }
+@keyframes sheen { 0% { transform: translateX(-120%) skewX(-18deg); } 55%, 100% { transform: translateX(260%) skewX(-18deg); } }
+@keyframes ping2 { 0% { box-shadow: 0 0 0 0 rgba(214, 176, 106, 0.55); } 100% { box-shadow: 0 0 0 14px rgba(214, 176, 106, 0); } }
+
+.a-up { animation: fadeUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0s); }
+.a-arc { stroke-dasharray: var(--len) var(--c); animation: drawArc 1.5s cubic-bezier(0.25, 0.8, 0.25, 1) both; animation-delay: var(--d, 0.2s); }
+.a-grow { transform-origin: bottom; animation: growY 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0s); }
+.a-pop { animation: popIn 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both; animation-delay: var(--d, 1.4s); }
+.a-spin { transform-box: fill-box; transform-origin: center; animation: spinSlow 70s linear infinite; }
+.a-spin-rev { transform-box: fill-box; transform-origin: center; animation: spinSlowRev 46s linear infinite; }
+.a-breathe { animation: breathe 4.5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.a-drift { animation: drift 26s ease-in-out infinite alternate; }
+.a-sheen::after { content: ""; position: absolute; inset: 0; width: 38%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent); animation: sheen 5.5s ease-in-out infinite; animation-delay: var(--d, 1s); }
+.a-ping { animation: ping2 2.4s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .a-up, .a-arc, .a-grow, .a-pop, .a-spin, .a-spin-rev, .a-breathe, .a-drift, .a-sheen::after, .a-ping { animation: none !important; }
+}
+
+/* ───── Animações extra: letras, gráficos e restantes páginas ───── */
+@keyframes letterIn { from { opacity: 0; transform: translateY(0.55em); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes goldWave { 0%, 100% { color: #e0b44c; } 45% { color: #fdeeb4; } 60% { color: #ebc25e; } }
+@keyframes breatheSoft { 0%, 100% { opacity: 0.1; } 50% { opacity: 0.24; } }
+@keyframes lineIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes shineUp { 0% { transform: translateY(120%); opacity: 0; } 15% { opacity: 1; } 55%, 100% { transform: translateY(-260%); opacity: 0; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.a-letter { display: inline-block; white-space: pre; animation: letterIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0s); }
+.a-letter.gold { color: #e0b44c; animation: letterIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both, goldWave 6s ease-in-out infinite; animation-delay: var(--d, 0s), calc(var(--d, 0s) + 1.4s); }
+.a-breathe-soft { animation: breatheSoft 6s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.a-line { transform-origin: left; animation: lineIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0s); }
+.a-fade { animation: fadeIn 0.8s ease-out both; animation-delay: var(--d, 0s); }
+.a-shine { position: relative; overflow: hidden; }
+.a-shine::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 45%; background: linear-gradient(to top, transparent, rgba(255, 255, 255, 0.4), transparent); animation: shineUp 5s ease-in-out infinite; animation-delay: var(--d2, 2s); pointer-events: none; }
+.slice { transition: stroke-width 0.25s ease, filter 0.25s ease; }
+.slice:hover { stroke-width: 25; filter: brightness(1.15); }
+
+/* Tabelas, grelhas de cartões e botões em todas as páginas */
+main tbody tr { animation: fadeUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+main tbody tr:nth-child(1) { animation-delay: 0.02s; } main tbody tr:nth-child(2) { animation-delay: 0.06s; }
+main tbody tr:nth-child(3) { animation-delay: 0.10s; } main tbody tr:nth-child(4) { animation-delay: 0.14s; }
+main tbody tr:nth-child(5) { animation-delay: 0.18s; } main tbody tr:nth-child(6) { animation-delay: 0.22s; }
+main tbody tr:nth-child(7) { animation-delay: 0.26s; } main tbody tr:nth-child(8) { animation-delay: 0.30s; }
+main tbody tr:nth-child(n+9) { animation-delay: 0.34s; }
+main .grid > *:not(.a-up) { animation: fadeUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+main .grid > *:not(.a-up):nth-child(2) { animation-delay: 0.07s; } main .grid > *:not(.a-up):nth-child(3) { animation-delay: 0.14s; }
+main .grid > *:not(.a-up):nth-child(4) { animation-delay: 0.21s; } main .grid > *:not(.a-up):nth-child(5) { animation-delay: 0.28s; }
+main .grid > *:not(.a-up):nth-child(n+6) { animation-delay: 0.34s; }
+main a, main button { transition-property: color, background-color, border-color, box-shadow, transform, opacity, filter; transition-duration: 0.2s; }
+main button:not(:disabled):active, main a:active { transform: scale(0.985); }
+dialog, [role="dialog"] > * { animation: fadeUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .a-letter, .a-letter.gold, .a-breathe-soft, .a-line, .a-fade, .a-shine::after, main tbody tr, main .grid > *:not(.a-up), [role="dialog"] > * { animation: none !important; }
+}
+
+/* ───── Dashboard: anéis premium e ambiente ───── */
+@keyframes ripple { 0% { transform: scale(1); opacity: 0.45; } 100% { transform: scale(1.28); opacity: 0; } }
+@keyframes orbit { to { transform: rotate(360deg); } }
+@keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes dotPulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.9); opacity: 0.1; } }
+@keyframes bokehUp { 0% { transform: translate3d(0, 20px, 0) scale(0.6); opacity: 0; } 15% { opacity: var(--o, 0.7); } 100% { transform: translate3d(var(--dx, 12px), -260px, 0) scale(1.1); opacity: 0; } }
+@keyframes shineX { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(400%); } }
+@keyframes imgDrift { from { transform: scale(1); } to { transform: scale(1.045); } }
+@keyframes tilePop { 0% { transform: scale(1); } 50% { transform: scale(1.22) rotate(-4deg); } 100% { transform: scale(1.1); } }
+
+.a-ripple { transform-box: fill-box; transform-origin: center; animation: ripple 4s ease-out infinite; animation-delay: var(--d, 0s); }
+.a-orbit { transform-box: view-box; transform-origin: 100px 100px; animation: orbit 9s linear infinite; animation-delay: var(--d, 0s); }
+.a-float { animation: floatY 6.5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.a-dotpulse { transform-box: fill-box; transform-origin: center; animation: dotPulse 2.6s ease-in-out infinite; animation-delay: var(--d, 2s); }
+.a-imgdrift { transform-origin: 70% 60%; animation: imgDrift 28s ease-in-out infinite alternate; }
+.bokeh { position: absolute; border-radius: 9999px; background: radial-gradient(circle, rgba(248, 222, 150, 0.95), rgba(248, 222, 150, 0) 70%); opacity: 0; animation: bokehUp var(--t, 12s) linear infinite; animation-delay: var(--d, 0s); }
+.panel-shine { position: absolute; left: 0; right: 0; top: 0; height: 1px; overflow: hidden; pointer-events: none; }
+.panel-shine::before { content: ""; position: absolute; inset: 0; width: 25%; background: linear-gradient(90deg, transparent, rgba(240, 214, 140, 0.8), transparent); animation: shineX 7s ease-in-out infinite; animation-delay: var(--d, 1s); }
+.tile-icon { transition: transform 0.3s; }
+.group:hover .tile-icon { animation: tilePop 0.5s ease forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .a-ripple, .a-orbit, .a-float, .a-dotpulse, .a-imgdrift, .bokeh, .panel-shine::before, .group:hover .tile-icon { animation: none !important; }
+}
+
+@keyframes shadowFloat { 0%, 100% { transform: scaleX(1); opacity: 0.6; } 50% { transform: scaleX(0.8); opacity: 0.35; } }
+.a-shadow { animation: shadowFloat 6.5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@media (prefers-reduced-motion: reduce) { .a-shadow { animation: none !important; } }
+
+/* ═════════ Todas as páginas: ambiente, títulos, cartões, tabelas e botões ═════════ */
+@keyframes wipeIn { from { -webkit-mask-size: 0% 100%; mask-size: 0% 100%; opacity: 0.2; filter: blur(5px); } to { -webkit-mask-size: 130% 100%; mask-size: 130% 100%; opacity: 1; filter: blur(0); } }
+@keyframes underlineIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes glowSlide { 0% { transform: translateX(-130%) skewX(-18deg); } 60%, 100% { transform: translateX(330%) skewX(-18deg); } }
+@keyframes barFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes sweepX { 0% { background-position: -40% 0; } 55%, 100% { background-position: 140% 0; } }
+@keyframes rowIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+
+/* Ambiente: luz dourada discreta no canto superior e azul no inferior */
+body {
+  background:
+    radial-gradient(1100px 520px at 88% -8%, rgba(214, 176, 106, 0.075), transparent 62%),
+    radial-gradient(900px 520px at -5% 105%, rgba(40, 90, 150, 0.12), transparent 62%),
+    var(--background);
+  background-attachment: fixed;
+}
+::selection { background: rgba(214, 176, 106, 0.35); color: #fff; }
+* { scrollbar-width: thin; scrollbar-color: rgba(214, 176, 106, 0.35) transparent; }
+
+/* Títulos: revelação da esquerda para a direita (letra a letra) + traço dourado por baixo */
+main h1:not(:has(.a-letter)) {
+  width: fit-content; max-width: 100%; position: relative;
+  -webkit-mask-image: linear-gradient(90deg, #000 70%, transparent 100%); mask-image: linear-gradient(90deg, #000 70%, transparent 100%);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: 130% 100%; mask-size: 130% 100%;
+  animation: wipeIn 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+main h1:not(:has(.a-letter))::after {
+  content: ""; position: absolute; left: 0; bottom: -6px; height: 2px; width: 56px; border-radius: 2px;
+  background: linear-gradient(90deg, #d6b06a, rgba(214, 176, 106, 0)); transform-origin: left; animation: underlineIn 0.9s 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+main h2.font-serif, main h3.font-serif { animation: fadeUp 0.7s 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+main section > p, main header p { animation: fadeUp 0.7s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* Imagem de abertura das páginas: deriva lenta */
+main img[class~="-z-20"] { animation: imgDrift 30s ease-in-out infinite alternate; transform-origin: 70% 55%; }
+
+/* Cartões: entrada em cascata, elevação e contorno dourado ao passar o rato, brilho a deslizar no topo */
+main .rounded-2xl.border, main .rounded-xl.border { transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; }
+main .grid > .rounded-2xl.border:hover, main .grid > .rounded-xl.border:hover { transform: translateY(-3px); border-color: rgba(214, 176, 106, 0.35); box-shadow: 0 18px 40px -22px rgba(214, 176, 106, 0.35); }
+main .rounded-2xl.border { position: relative; }
+main .rounded-2xl.border:not(.overflow-visible)::before { content: ""; position: absolute; left: 14px; right: 14px; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(240, 214, 140, 0.75), transparent) no-repeat; background-size: 30% 100%; animation: sweepX 9s ease-in-out infinite; pointer-events: none; }
+
+/* Tabelas: linha acende ao passar o rato, com barra dourada à esquerda */
+main tbody tr { transition: background-color 0.2s ease, box-shadow 0.2s ease; }
+main tbody tr:hover { background-color: rgba(214, 176, 106, 0.06); box-shadow: inset 2px 0 0 rgba(214, 176, 106, 0.8); }
+main thead th { letter-spacing: 0.06em; }
+
+/* Barras de progresso e indicadores: enchem da esquerda */
+main [class*="rounded-full"][style*="width"] > i, main .progress > i { transform-origin: left; animation: barFill 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+main [class*="h-1.5"][class*="rounded-full"] > div[style*="width"], main [class*="h-2"][class*="rounded-full"] > div[style*="width"] { transform-origin: left; animation: barFill 1.1s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* Botões dourados: brilho a passar */
+.btn-gold { position: relative; overflow: hidden; }
+.btn-gold::after { content: ""; position: absolute; inset: 0; width: 38%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent); animation: glowSlide 6s ease-in-out infinite; animation-delay: 1.5s; pointer-events: none; }
+
+/* Separadores, filtros e campos */
+main select, main input, main textarea { transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; }
+main input:focus, main select:focus, main textarea:focus { box-shadow: 0 0 0 3px rgba(214, 176, 106, 0.18); }
+[role="dialog"] { animation: fadeIn 0.25s ease-out both; }
+
+/* Barra lateral: itens deslizam ao entrar e ao passar o rato */
+aside nav a { transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease; }
+aside nav a:hover { transform: translateX(3px); }
+aside nav > div { animation: rowIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+aside nav > div:nth-child(2) { animation-delay: 0.06s; } aside nav > div:nth-child(3) { animation-delay: 0.12s; }
+aside nav > div:nth-child(4) { animation-delay: 0.18s; } aside nav > div:nth-child(5) { animation-delay: 0.24s; }
+aside nav > div:nth-child(6) { animation-delay: 0.3s; } aside nav > div:nth-child(7) { animation-delay: 0.36s; }
+
+@media (prefers-reduced-motion: reduce) {
+  main h1:not(:has(.a-letter)), main h1:not(:has(.a-letter))::after, main h2.font-serif, main h3.font-serif, main section > p, main header p,
+  main img[class~="-z-20"], main .rounded-2xl.border::before, main [class*="rounded-full"][style*="width"] > i, .btn-gold::after, [role="dialog"], aside nav > div { animation: none !important; }
+  main h1:not(:has(.a-letter)) { -webkit-mask-image: none; mask-image: none; }
 }

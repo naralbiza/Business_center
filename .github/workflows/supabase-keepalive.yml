@@ -1,0 +1,34 @@
+name: Supabase keep-alive
+
+# Evita que o projeto Supabase (plano gratuito) seja pausado por inactividade:
+# todos os dias regista uma linha na tabela "keepalive" através da função keepalive_ping().
+# Requer os secrets SUPABASE_URL e SUPABASE_ANON_KEY (Settings → Secrets and variables → Actions).
+on:
+  schedule:
+    - cron: "17 6 * * *" # todos os dias às 06:17 UTC
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Chamar keepalive_ping()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "Faltam os secrets SUPABASE_URL e SUPABASE_ANON_KEY."; exit 1
+          fi
+          status=$(curl -sS -o response.json -w "%{http_code}" --retry 3 --retry-delay 10 \
+            -X POST "${SUPABASE_URL%/}/rest/v1/rpc/keepalive_ping" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" -d '{}')
+          echo "HTTP $status"
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "Falhou (a migração 0022_keepalive.sql foi aplicada?)"; exit 1
+          fi
