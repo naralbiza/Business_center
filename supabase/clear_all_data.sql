@@ -1,11 +1,11 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 -- LIMPAR TODOS OS DADOS DE PRODUÇÃO — INÍCIO DO ZERO
 -- Executar no SQL Editor do Supabase (com service role / postgres).
--- Preserva o esquema, as migrações, as funções, as views e os utilizadores
--- da tabela auth.users. Apenas apaga dados das tabelas de negócio.
+-- Preserva: perfis (profiles), permissões (role_permissions/group_permissions),
+-- configurações (app_settings) e auth.users.
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- Desativar temporariamente os triggers para evitar erros de ordem
+-- Desativar temporariamente os triggers para evitar restrições de FK/ordem
 SET session_replication_role = replica;
 
 -- ── Operações / Manutenção / Logística
@@ -41,31 +41,33 @@ DELETE FROM documents;
 DELETE FROM payments;
 DELETE FROM installments;
 DELETE FROM contracts;
-DELETE FROM debts;  -- vista materializada ou tabela auxiliar (ignora se não existir)
 
 -- ── Escritórios e Empresas
+DELETE FROM office_custom_fields;
 DELETE FROM offices;
 DELETE FROM companies;
 DELETE FROM buildings;
 
--- ── Notificações
+-- ── Logs e Notificações
 DELETE FROM notifications;
+DELETE FROM activity_logs;
+DELETE FROM access_log;
 
 -- Reativar triggers
 SET session_replication_role = DEFAULT;
 
--- Confirmar
+-- Confirmar que tudo ficou a zero
 SELECT
-  (SELECT count(*) FROM companies)       AS empresas,
-  (SELECT count(*) FROM offices)         AS escritorios,
-  (SELECT count(*) FROM contracts)       AS contratos,
-  (SELECT count(*) FROM installments)    AS parcelas,
-  (SELECT count(*) FROM payments)        AS pagamentos,
-  (SELECT count(*) FROM employees)       AS funcionarios,
-  (SELECT count(*) FROM event_leads)     AS leads,
-  (SELECT count(*) FROM venue_reservations) AS reservas,
-  (SELECT count(*) FROM notifications)   AS notificacoes,
-  (SELECT count(*) FROM tax_obligations) AS impostos,
-  (SELECT count(*) FROM suppliers)       AS fornecedores,
-  (SELECT count(*) FROM equipment)       AS equipamentos,
-  (SELECT count(*) FROM restaurant_tables) AS mesas;
+  (SELECT count(*) FROM companies)              AS empresas,
+  (SELECT count(*) FROM offices)                AS escritorios,
+  (SELECT count(*) FROM contracts)              AS contratos,
+  (SELECT count(*) FROM installments)           AS parcelas,
+  (SELECT count(*) FROM payments)               AS pagamentos,
+  (SELECT count(*) FROM employees)              AS funcionarios,
+  (SELECT count(*) FROM event_leads)            AS leads,
+  (SELECT count(*) FROM venue_reservations)     AS reservas,
+  (SELECT count(*) FROM notifications)          AS notificacoes,
+  (SELECT count(*) FROM tax_obligations)        AS impostos,
+  (SELECT count(*) FROM suppliers)              AS fornecedores,
+  (SELECT count(*) FROM equipment)              AS equipamentos,
+  (SELECT count(*) FROM restaurant_tables)      AS mesas;
